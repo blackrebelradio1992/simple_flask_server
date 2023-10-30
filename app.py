@@ -1,6 +1,22 @@
 from flask import Flask, jsonify
+from flask_sqlalchemy import SQLAlchemy
+app = Flask(__name__)
 
-app =  Flask(__name__)
+app = Flask(__name__)
+
+# Configuration for the PostgreSQL database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost/students'
+
+# Initialize the SQLAlchemy extension
+db = SQLAlchemy(app)
+
+class Student(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    first_name = db.Column(db.String(20))
+    last_name = db.Column(db.String(20))
+    age =db.Column(db.Integar)
+    grade =db.Column(db.String(1))
+
 
 students = [
      {'id': '1', 'first_name': 'John', 'last_name': 'Doe', 'age': 18, 'grade': 'A'},
@@ -15,9 +31,22 @@ students = [
      {'id': '10', 'first_name': 'Isabella', 'last_name': 'Moore', 'age': 22, 'grade': 'B'}
  ]
 
-
-@app.route('/students/', methods=['GET'])
+#http://127.0.0.1:5000/
+"http://127.0.0.1:5000/students/"
+# @app.route('/students/', methods=['GET'])
 def get_students():
+        students = Student.query.all()
+        fromatted_students = []
+        for stud in students:
+            fromatted_students.append(
+                {
+                        "id": stud.id,
+                        "first_name": stud.first_name,
+                        "last_name": stud.last_name,
+                        "age": stud.age,
+                        "grade": stud.grade,
+                }
+            )
         return jsonify(students)
 
 
